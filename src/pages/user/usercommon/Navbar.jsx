@@ -149,8 +149,7 @@ const NavBar = ({ fetchPosts }) => {
   useEffect(() => {
     if (user_id) {
       const accessToken = localStorage.getItem("access");
-      const websocketProtocol =
-        window.location.protocol === "https://" ? "wss://" : "ws://";
+      const websocketProtocol = window.location.protocol === "https://" ? "wss://" : "ws://";
       const socket = new WebSocket(
         `${websocketProtocol}${WEBSOCKET_BASE_URL}/ws/notification/?token=${accessToken}`
       );
