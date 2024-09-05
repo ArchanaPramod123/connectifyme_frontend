@@ -15,7 +15,9 @@ const Otppage = () => {
   
   const navigate = useNavigate();
   const twoDigits = (num) => String(num).padStart(2, '0');
-  const baseURL = 'http://127.0.0.1:8000/';
+  // const baseURL = 'http://127.0.0.1:8000/';
+  const baseURL = import.meta.env.VITE_BASE_URL;
+
   const [minute, setMinute] = useState(1);
   const [second, setSecond] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -44,7 +46,7 @@ const Otppage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(baseURL + 'api/verify-otp/', { otp: otpValue, email });
+      const response = await axios.post(baseURL + '/api/verify-otp/', { otp: otpValue, email });
       setLoading(false);
       localStorage.removeItem('email');
       navigate('/user'); 
@@ -57,7 +59,7 @@ const Otppage = () => {
   const handleResendOTP = async () => {
     if (loading) return;
     try {
-      const response = await axios.post(`${baseURL}api/resend-otp/`, { email });
+      const response = await axios.post(`${baseURL}/api/resend-otp/`, { email });
       setMinute(1);
       setSecond(30);
       setResend(false);

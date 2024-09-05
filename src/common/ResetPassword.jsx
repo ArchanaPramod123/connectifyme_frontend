@@ -134,7 +134,9 @@ import backgroundImage from '../assets/bg.jpg';
 function ResetPassword() {
   const { id } = useParams();
   const [formError, setFormError] = useState('');
-  const baseURL = 'http://127.0.0.1:8000/';
+  // const baseURL = 'http://127.0.0.1:8000/';
+  const baseURL = import.meta.env.VITE_BASE_URL;
+
   const navigate = useNavigate();
 
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -143,7 +145,7 @@ function ResetPassword() {
     formData.append('id', id);
 
     try {
-      const response = await axios.post(`${baseURL}api/reset_password/${id}/`, formData);
+      const response = await axios.post(`${baseURL}/api/reset_password/${id}/`, formData);
       if (response.status === 200) {
         setFormError('');
         toast.success('Password reset successful!', {

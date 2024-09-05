@@ -114,7 +114,8 @@ import backgroundImage from '../assets/bg.jpg'; // Add your background image
 function ForgetPassword() {
   const [f_pass, setF_pass] = useState("");
   const [formError, setFormError] = useState('');
-  const baseURL = 'http://127.0.0.1:8000/';
+  // const baseURL = 'http://127.0.0.1:8000/';
+  const baseURL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const [isSpinner, setIsSpiner] = useState(false);
 
@@ -130,7 +131,7 @@ function ForgetPassword() {
     setIsSpiner(true);
 
     try {
-      const response = await axios.post(baseURL + 'api/forgot_pass/', formData);
+      const response = await axios.post(baseURL + '/api/forgot_pass/', formData);
 
       if (response.status === 200) {
         setFormError('');
