@@ -19,7 +19,8 @@ import ForgetPassword from '../../common/ForgetPassword';
 import ResetPassword from '../../common/ResetPassword';
 import ReportModal from '../../pages/user/post/UserPostReport';
 import OneToOneVideoCall from '../../pages/user/chat/OneToOneVideoCall';
-
+import Notifications from '../../pages/user/post/Notifications';
+import NavBar from '../../pages/user/usercommon/Navbar';
 const UserWrapper = () => {
   return (
     <div>
@@ -29,33 +30,23 @@ const UserWrapper = () => {
         {/* <Route path="/" element={<UserLogin />} />
         <Route path="/signup" element={<UserSignUp />}/> */}
         <Route path="/otp-verify" element={<VerifyOTP />} />
-
         <Route path='/forgot-password' element={<ForgetPassword></ForgetPassword>}/>
         <Route path='/reset_password/:id' element={<ResetPassword></ResetPassword>}/>
-
         <Route path="/home" element={<PrivateRoute><UserHome /></PrivateRoute>} />
         <Route path="/create-post" element={<PrivateRoute><CreatePostPage /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><UserProfilePage /></PrivateRoute>} />
         <Route path="/profile/:userId" element={<PrivateRoute><UserProfilePage /></PrivateRoute>} />
-        
         <Route path="/edit-profile/:userId" element={<PrivateRoute><EditUserProfile /></PrivateRoute>} />
         <Route path="/profile-setup" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
         <Route path='/post-detail/:postId' element={<PrivateRoute><PostDetailPage/></PrivateRoute>}/>
-
         <Route path='/search' element={<PrivateRoute><SearchModal/></PrivateRoute>}/>
-
-
+        <Route path='/navbar' element={<PrivateRoute><NavBar/></PrivateRoute>}/>
+        <Route path='/notifications' element={<PrivateRoute><Notifications/></PrivateRoute>}/>
         <Route path='/suggestions' element={<PrivateRoute><Suggestion/></PrivateRoute>}/>
-
         <Route path='/messages' element={<PrivateRoute><Messages/></PrivateRoute>}/>
         <Route path='/explore' element={<PrivateRoute><Explore/></PrivateRoute>}/>
-
-
         <Route path='/reportpost' element={<PrivateRoute><ReportModal/></PrivateRoute>}/>
         <Route path="/video-call/:roomId" element={<PrivateRoute><OneToOneVideoCall /></PrivateRoute>} />
-
-
-
       </Routes>
     </div>
   );

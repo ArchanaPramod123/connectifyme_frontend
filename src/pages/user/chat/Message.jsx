@@ -1976,6 +1976,10 @@ const Messages = () => {
   const [dpChat, setDpChat] = useState(null);
   const [videoCallDetails, setVideoCallDetails] = useState(null);
   const [profilePicture, setProfilePicture] = useState("");
+  const WEBSOCKET_BASE_URL = import.meta.env.VITE_WEBSOCKET;
+
+  
+
 
   const navigate = useNavigate();
 
@@ -2063,7 +2067,7 @@ const Messages = () => {
       const accessToken = localStorage.getItem("access");
       const websocketProtocol =
         window.location.protocol === "https:" ? "wss://" : "ws://";
-      const wsUrl = `${websocketProtocol}127.0.0.1:8000/ws/chat/${chatroomId}/?token=${accessToken}`;
+      const wsUrl = `${websocketProtocol}${WEBSOCKET_BASE_URL}/ws/chat/${chatroomId}/?token=${accessToken}`;
       const newChatWs = new WebSocket(wsUrl);
 
       newChatWs.onopen = async () => {
@@ -2183,7 +2187,8 @@ const Messages = () => {
                   </div>
                 )}
                 <div className="flex-grow"></div>
-                <div className="fixed bottom-6 w-[44%] bg-gray-200 p-4 rounded-lg flex justify-between items-center">
+                <div className="fixed bottom-6 w-[44%] bg-gray-200 rounded-lg flex justify-between items-center">
+                {/* p-4 */}
                   <input
                     type="text"
                     value={inputMessage}

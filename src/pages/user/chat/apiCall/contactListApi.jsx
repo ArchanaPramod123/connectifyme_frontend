@@ -9,6 +9,8 @@ const contactListApi = async () => {
       
       if (response.status === 200) {
         console.log("contact lists for chat", response.data);
+        
+        
         return response.data;
       } else {
         console.log(response.error);

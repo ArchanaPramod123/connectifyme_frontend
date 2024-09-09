@@ -25,7 +25,7 @@ const Explore = () => {
 
   return (
     <div className="flex">
-      <div className="w-1/4 bg-white shadow-md fixed top-0 left-0 bottom-0 z-9">
+      <div className=" bg-white shadow-md fixed top-0 left-0 bottom-0 z-9">
         <NavBar />
       </div>
       <div className="flex-grow ml-60 p-4 overflow-auto">
@@ -35,7 +35,8 @@ const Explore = () => {
             <p>No posts available.</p>
           ) : (
             posts.map((post) => (
-              <div key={post.id} className="relative">
+              <div key={post.id}>
+                {/* className="relative" */}
                 <img
                   src={`${baseURL}${post.img}`}
                   alt="Post"

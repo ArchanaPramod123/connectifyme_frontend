@@ -1,30 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
-import { set_Authentication } from '../../Redux/Authentication/authenticationSlice';
-import { set_user_basic_details } from '../../Redux/UserDetails/UserDetails';
-import backgroundImage from '../../assets/bg.jpg';
-import { Toaster, toast } from 'sonner';
-
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { set_Authentication } from "../../Redux/Authentication/authenticationSlice";
+import { set_user_basic_details } from "../../Redux/UserDetails/UserDetails";
+import backgroundImage from "../../assets/bg.jpg";
+import { Toaster, toast } from "sonner";
 
 const UserLogin = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const { loading, error } = useSelector((state) => state.auth);
-  const [formError, setFormError] = useState('');
+  const [formError, setFormError] = useState("");
   const navigate = useNavigate();
   const baseURL = import.meta.env.VITE_BASE_URL;
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     navigate('/user/home');
-  //   }
-  // }, [isAuthenticated, navigate]);
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -35,33 +29,29 @@ const UserLogin = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(baseURL + '/api/login/', formData);
-      console.log("i wnat to check the user_id is store",formData);
-      
+      const response = await axios.post(baseURL + "/api/login/", formData);
+      console.log("i wnat to check the user_id is store", formData);
 
       if (response.status === 200) {
         const decodedToken = jwtDecode(response.data.access_token);
 
-        localStorage.setItem('access', response.data.access_token);
-        localStorage.setItem('refresh', response.data.refresh_token);
-        console.log("user_iddddddddddddddddddddddddddddd",response.data.user_id);
-        console.log("user_nameeeeeeeeeeeeeeeeeeeeeeeeeee",response.data.name);
-        // console.log("user_profileeeeeeeeeeeeepiccccccccc",response.data.profile_picture);
-        
+        localStorage.setItem("access", response.data.access_token);
+        localStorage.setItem("refresh", response.data.refresh_token);
+        console.log(
+          "user_iddddddddddddddddddddddddddddd",
+          response.data.user_id
+        );
+        console.log("user_nameeeeeeeeeeeeeeeeeeeeeeeeeee", response.data.name);
 
         dispatch(
           set_Authentication({
-            id:response.data.user_id,
+            id: response.data.user_id,
             name: response.data.name,
             email: response.data.email,
-            // profile_picture: response.data.profile_picture,
             isAuthenticated: true,
             isAdmin: response.data.isAdmin,
           })
-          
-          
         );
-       
 
         dispatch(
           set_user_basic_details({
@@ -70,22 +60,22 @@ const UserLogin = () => {
           })
         );
 
-        console.log("response of the data in profile",response.data.profile_complete);
+        console.log(
+          "response of the data in profile",
+          response.data.profile_complete
+        );
         if (response.data.profile_complete) {
-          // console.log("pleaseeeeeeeee goooooooooooo toooooooooooooprofilr");
-          toast.success('Successfuly login');
+          toast.success("Successfuly login");
 
-          navigate('/user/home');
-          console.log("the userid thst go to the redux id",user_id);
+          navigate("/user/home");
+          console.log("the userid thst go to the redux id", user_id);
         } else {
-          // console.log("checkkkkkkkkkkkkkkkkkkkkkk");
-          toast.info("Complete your account updation")
-          navigate('/user/profile-setup');
+          toast.info("Complete your account updation");
+          navigate("/user/profile-setup");
         }
       }
     } catch (error) {
-      setFormError('Invalid email or password');
-      // console.log('error', error);
+      setFormError("Invalid email or password");
       // toast.error('invalid password or email')
     }
   };
@@ -122,22 +112,35 @@ const UserLogin = () => {
               required
             />
           </div>
-          {formError && <div className="flex justify-start mb-5 pl-3 text-red-600"><p>{formError}</p></div>}
+          {formError && (
+            <div className="flex justify-start mb-5 pl-3 text-red-600">
+              <p>{formError}</p>
+            </div>
+          )}
           <p className="mt-4">
-  Forgot your password? <Link to="/user/forgot-password" className="text-blue-400 hover:underline">Reset Password</Link>
-</p>
+            Forgot your password?{" "}
+            <Link
+              to="/user/forgot-password"
+              className="text-blue-400 hover:underline"
+            >
+              Reset Password
+            </Link>
+          </p>
 
           <button
             type="submit"
             className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-all duration-300"
             disabled={loading}
           >
-            {loading ? 'Logging In...' : 'Login'}
+            {loading ? "Logging In..." : "Login"}
           </button>
         </form>
         {error && <p className="mt-4 text-red-500">{error}</p>}
         <p className="mt-4">
-          Don't have an account? <Link to="/user/signup/" className="text-blue-400 hover:underline">Sign Up</Link>
+          Don't have an account?{" "}
+          <Link to="/user/signup/" className="text-blue-400 hover:underline">
+            Sign Up
+          </Link>
         </p>
       </div>
     </div>

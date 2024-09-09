@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
 import isAuthUser from "../utils/isAuthuser";
+import PrivateLayout from "./PrivateLayout";
 
 const PrivateRoute = ({ children }) => {
   const dispatch = useDispatch();
@@ -21,7 +22,12 @@ const PrivateRoute = ({ children }) => {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? children : <Navigate to="/" />;
+  // return isAuthenticated ? children : <Navigate to="/" />;
+  return isAuthenticated ? (
+    <PrivateLayout>{children}</PrivateLayout>
+  ) : (
+    <Navigate to="/" />
+  );
 };
 
 export default PrivateRoute;

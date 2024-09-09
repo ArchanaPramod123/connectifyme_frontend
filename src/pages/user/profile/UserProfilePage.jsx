@@ -1,3 +1,17 @@
+// 
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../usercommon/Navbar";
@@ -7,9 +21,12 @@ import PostDetailPage from "./PostDetailPage";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import createChatRoomApi from "../chat/apiCall/createChatRoomApi"; // Import the chat room creation function
+import UserFollowFollowing from "./UserFollowFollowing";
 
 const UserProfilePage = () => {
   const { userId } = useParams();
+  console.log("UserId in useParams:", userId); // Add this to check the value of userId
+
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState("");
@@ -18,6 +35,12 @@ const UserProfilePage = () => {
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [isPostDetailOpen, setIsPostDetailOpen] = useState(false);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [showFollowingModal, setShowFollowingModal] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+
   const userprofile_id = useSelector((state) => state.auth.user_id);
   const baseURL = import.meta.env.VITE_BASE_URL;
   useEffect(() => {
@@ -68,6 +91,39 @@ const UserProfilePage = () => {
       console.error("Failed to follow/unfollow user", error);
     }
   };
+
+
+
+
+  const fetchFollowers = async () => {
+    const token = localStorage.getItem("access");
+    try {
+      const response = await axios.get(`${baseURL}/post/followers/${userId}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFollowers(response.data.followers);
+      setShowFollowersModal(true);
+    } catch (error) {
+      console.error("Failed to fetch followers", error);
+    }
+  };
+
+  const fetchFollowing = async () => {
+    const token = localStorage.getItem("access");
+    try {
+      // const response = await axios.get(`${baseURL}/post/following/${userprofile_id}/`, {
+      const response = await axios.get(`${baseURL}/post/following/${userId}/`, {
+
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFollowing(response.data.following);
+      setShowFollowingModal(true);
+    } catch (error) {
+      console.error("Failed to fetch following", error);
+    }
+  };
+
+
 
   const openPostDetail = (postId) => {
     setSelectedPostId(postId);
@@ -159,11 +215,11 @@ const UserProfilePage = () => {
                 <div>Posts</div>
               </div>
               <div className="text-center">
-                <div className="font-bold">{profile.follower_count}</div>
+                <div className="font-bold" onClick={fetchFollowers}>{profile.follower_count}</div>
                 <div>Followers</div>
               </div>
               <div className="text-center">
-                <div className="font-bold">{profile.following_count}</div>
+                <div className="font-bold" onClick={fetchFollowing}>{profile.following_count}</div>
                 <div>Following</div>
               </div>
             </div>
@@ -203,6 +259,30 @@ const UserProfilePage = () => {
           onProfileUpdate={handleProfileUpdate}
         />
       )}
+
+       {/* Modal for Followers */}
+       {showFollowersModal && (
+          <UserFollowFollowing
+            isOpen={showFollowersModal}
+            onClose={() => setShowFollowersModal(false)}
+            title="Followers"
+            users={followers}
+          />
+        )}
+
+        {/* Modal for Following */}
+        {showFollowingModal && (
+          <UserFollowFollowing
+            isOpen={showFollowingModal}
+            onClose={() => setShowFollowingModal(false)}
+            title="Following"
+            users={following}
+          />
+        )}
+
+        
+
+
       <PostDetailPage
         postID={selectedPostId}
         onClose={closePostDetail}
