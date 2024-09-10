@@ -2061,6 +2061,11 @@ const Messages = () => {
 
   const joinChatroom = async (chatroomId, userId, dp_image) => {
     try {
+      // Close the previous WebSocket connection if it exists
+      if (ws) {
+        ws.close();
+      }
+
       setBg(true);
       setDpChat(dp_image);
 
@@ -2120,6 +2125,23 @@ const Messages = () => {
       console.error("WebSocket connection is not established.");
     }
   };
+
+  function useDebounce(func, delay) {
+    const timeoutRef = useRef(null);
+  
+    return (...args) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  }
+  
+  // Use the debounce in your send message function
+  const debouncedSendMessage = useDebounce(handleSendMessage, 300);
+  
 
   if (!isAuthenticated) {
     navigate("/");
@@ -2197,7 +2219,8 @@ const Messages = () => {
                     placeholder="Type a message..."
                   />
                   <button
-                    onClick={handleSendMessage}
+                    // onClick={handleSendMessage}
+                    onClick={debouncedSendMessage}
                     className="bg-[#4b2848] text-white px-4 py-2 rounded-r-md"
                   >
                     Send
