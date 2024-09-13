@@ -185,7 +185,7 @@ function ForgetPassword() {
           </button>
         </form>
         <p className="mt-4">
-          Remembered your password? <Link to="/user/login" className="text-blue-400 hover:underline">Login</Link>
+          Remembered your password? <Link to="/user" className="text-blue-400 hover:underline">Login</Link>
         </p>
       </div>
 

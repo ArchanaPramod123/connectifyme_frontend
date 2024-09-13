@@ -72,10 +72,19 @@ const PostDetailPage = ({ postID, onClose, isPostDetailOpen }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      onDeletePost(postID);
-      onClose();
-      toast.success("delete Successfuly");
-    } catch (error) {
+    //   onDeletePost(postID);
+    //   onClose();
+    //   toast.success("delete Successfuly");
+    // } 
+    if (response.status === 204) { // Check for successful deletion status code
+      onDeletePost(postID); // Remove post from UI
+      onClose(); // Close the modal
+      toast.success("Post deleted successfully!");
+    } else {
+      toast.error("Failed to delete post. Try again.");
+    }
+  } 
+    catch (error) {
       setError("Failed to delete post");
     }
   };

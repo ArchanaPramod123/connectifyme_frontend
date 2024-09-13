@@ -1953,6 +1953,408 @@
 
 
 
+// import React, { useEffect, useRef, useState } from "react";
+// import { BASE_URL } from "../../../utils/constants";
+// import NavBar from "../usercommon/Navbar";
+// import { useSelector } from "react-redux";
+// import axios from 'axios';
+// import { useNavigate } from "react-router-dom";
+// import contactListApi from "../chat/apiCall/contactListApi";
+// import getChatMessageApi from "../chat/apiCall/getChatMessagesApi";
+// import messageSeenApi from "../chat/apiCall/messageSeenApi";
+// import IncomingVideoCallAlert from "./IncomingVideoCallAlert";
+
+// const Messages = () => {
+//   const { user_id, name, email, isAuthenticated } = useSelector(
+//     (state) => state.auth
+//   );
+//   const [profiles, setProfiles] = useState([]);
+//   const [ws, setWs] = useState(null);
+//   const [messages, setMessages] = useState([]);
+//   const [inputMessage, setInputMessage] = useState("");
+//   const [bg, setBg] = useState(false);
+//   const [dpChat, setDpChat] = useState(null);
+//   const [videoCallDetails, setVideoCallDetails] = useState(null);
+//   const [profilePicture, setProfilePicture] = useState("");
+//   const WEBSOCKET_BASE_URL = import.meta.env.VITE_WEBSOCKET;
+
+  
+
+
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     const fetchProfilePicture = async () => {
+//       try {
+//         const response = await axios.get(`${BASE_URL}/api/profile_pic/`, {
+//           headers: {
+//             'Authorization': `Bearer ${localStorage.getItem("access")}`,
+//           },
+//         });
+//         setProfilePicture(response.data.profile_picture);
+//       } catch (error) {
+//         console.error("Error fetching profile picture:", error);
+//       }
+//     };
+//     fetchProfilePicture();
+//   }, []);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const result = await contactListApi();
+//         setProfiles(result.results);
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     };
+
+//     if (isAuthenticated) {
+//       fetchData();
+//     }
+//   }, [isAuthenticated]);
+
+//   useEffect(() => {
+//     if (ws) {
+//       ws.onmessage = (event) => {
+//         const message = JSON.parse(event.data);
+//         if (message.type === "video_call" && message.callee === email) {
+//           setVideoCallDetails({
+//             caller: message.caller,
+//             roomId: message.room_id,
+//           });
+//         } else if (message.type === "chat_message") {
+//           setMessages((prevMessages) => [...prevMessages, message]);
+//         } else {
+//           console.error("Unknown message type received");
+//         }
+//       };
+//     }
+//   }, [ws, email]);
+
+//   const handleAcceptCall = () => {
+//     navigate(`/user/video-call/${videoCallDetails.roomId}`);
+//   };
+
+//   const handleDeclineCall = () => {
+//     setVideoCallDetails(null);
+//   };
+
+//   const ref = useChatScroll(messages);
+
+//   function useChatScroll(dep) {
+//     const ref = useRef();
+//     useEffect(() => {
+//       if (ref.current) {
+//         ref.current.scrollTop = ref.current.scrollHeight;
+//       }
+//     }, [dep]);
+//     return ref;
+//   }
+
+//   const handleSendMessage = () => {
+//     if (ws && inputMessage.trim() !== "") {
+//       ws.send(JSON.stringify({ message: inputMessage }));
+//       setInputMessage("");
+//     }
+//   };
+
+//   const joinChatroom = async (chatroomId, userId, dp_image) => {
+//     try {
+//       // Close the previous WebSocket connection if it exists
+//       if (ws) {
+//         ws.close();
+//       }
+
+//       setBg(true);
+//       setDpChat(dp_image);
+
+//       const accessToken = localStorage.getItem("access");
+//       const websocketProtocol =
+//         window.location.protocol === "https:" ? "wss://" : "ws://";
+//       const wsUrl = `${websocketProtocol}${WEBSOCKET_BASE_URL}/ws/chat/${chatroomId}/?token=${accessToken}`;
+//       const newChatWs = new WebSocket(wsUrl);
+
+//       newChatWs.onopen = async () => {
+//         const previousMessages = await getChatMessageApi(chatroomId);
+//         setMessages(previousMessages);
+
+//         await messageSeenApi(userId);
+//         setProfiles((prevProfiles) =>
+//           prevProfiles.map((profile) =>
+//             profile.id === chatroomId
+//               ? { ...profile, unseen_message_count: 0 }
+//               : profile
+//           )
+//         );
+//       };
+
+//       newChatWs.onmessage = (event) => {
+//         const message = JSON.parse(event.data);
+//         if (message.type === "video_call" && message.callee === email) {
+//           setVideoCallDetails({
+//             caller: message.caller,
+//             roomId: message.room_id,
+//           });
+//         } else {
+//           setMessages((prevMessages) => [...prevMessages, message]);
+//         }
+//       };
+
+//       setWs(newChatWs);
+//     } catch (error) {
+//       console.error("Failed to join chatroom:", error);
+//     }
+//   };
+
+//   const handleVideoCall = (calleeEmail, chatroomId) => {
+//     if (ws) {
+//       const callerEmail = email;
+
+//       ws.send(
+//         JSON.stringify({
+//           type: "video_call",
+//           caller: callerEmail,
+//           callee: calleeEmail,
+//           room_id: chatroomId,
+//         })
+//       );
+
+//       navigate(`/user/video-call/${chatroomId}`);
+//     } else {
+//       console.error("WebSocket connection is not established.");
+//     }
+//   };
+
+//   function useDebounce(func, delay) {
+//     const timeoutRef = useRef(null);
+  
+//     return (...args) => {
+//       if (timeoutRef.current) {
+//         clearTimeout(timeoutRef.current);
+//       }
+//       timeoutRef.current = setTimeout(() => {
+//         func(...args);
+//       }, delay);
+//     };
+//   }
+  
+//   // Use the debounce in your send message function
+//   const debouncedSendMessage = useDebounce(handleSendMessage, 300);
+  
+
+//   if (!isAuthenticated) {
+//     navigate("/");
+//   }
+
+//   return (
+//     <div className="flex h-screen">
+//       <div className="w-[16.5%] bg-[#faf7f4] border-r-2 border-double fixed h-full">
+//         <NavBar />
+//       </div>
+//       <div className="flex flex-col w-full pl-[16.5%] bg-[#faf7f4]">
+//         <div className="flex flex-grow p-2 h-screen">
+//           <div className="flex flex-col w-3/5 mt-5 p-1 m-2 bg-white shadow-lg rounded-lg overflow-hidden">
+//             {bg ? (
+//               <div ref={ref} className="flex flex-col p-4 overflow-auto mb-5">
+//                 {messages?.length > 0 ? (
+//                   messages.map((message, index) =>
+//                     message?.sender_email === email ? (
+//                       <div
+//                         key={index}
+//                         className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end"
+//                       >
+//                         <div>
+//                           <div className="bg-green-500 text-white p-1 rounded-l-lg rounded-br-lg">
+//                             <p className="text-sm m-1">
+//                               {message.message || message.text}
+//                             </p>
+//                           </div>
+//                           <span className="text-xs text-gray-500 leading-none">
+//                             {message.created} ago
+//                           </span>
+//                         </div>
+//                         <img
+//                           className="h-10 w-10 rounded-full"
+//                           src={`${BASE_URL}${profilePicture}`}
+//                           alt="authentication_user"
+//                         />
+//                       </div>
+//                     ) : (
+//                       <div
+//                         key={index}
+//                         className="flex w-full mt-2 space-x-3 max-w-xs"
+//                       >
+//                         <img
+//                           className="h-10 w-10 rounded-full"
+//                           src={`${BASE_URL}${dpChat}`}
+//                           alt="authentication_user"
+//                         />
+//                         <div>
+//                           <div className="bg-gray-300 p-1 rounded-r-lg rounded-bl-lg">
+//                             <p className="text-sm m-1">
+//                               {message.message || message.text}
+//                             </p>
+//                           </div>
+//                           <span className="text-xs text-gray-500 leading-none">
+//                             {message.created} ago
+//                           </span>
+//                         </div>
+//                       </div>
+//                     )
+//                   )
+//                 ) : (
+//                   <div className="flex flex-col flex-grow p-4 overflow-auto">
+//                     <p className="mx-auto my-auto">No messages yet.</p>
+//                   </div>
+//                 )}
+//                 <div className="flex-grow"></div>
+//                 <div className="fixed bottom-6 w-[44%] bg-gray-200 rounded-lg flex justify-between items-center">
+//                 {/* p-4 */}
+//                   <input
+//                     type="text"
+//                     value={inputMessage}
+//                     onChange={(e) => setInputMessage(e.target.value)}
+//                     className="w-full p-2 border border-gray-400 rounded-l-md"
+//                     placeholder="Type a message..."
+//                   />
+//                   <button
+//                     // onClick={handleSendMessage}
+//                     onClick={debouncedSendMessage}
+//                     className="bg-[#4b2848] text-white px-4 py-2 rounded-r-md"
+//                   >
+//                     Send
+//                   </button>
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="flex flex-col flex-grow p-4 overflow-auto">
+//                 <p className="mx-auto my-auto">No messages yet.</p>
+//               </div>
+//             )}
+//           </div>
+//           <div className="flex flex-grow w-2/5 mt-5 p-2 m-2 bg-white shadow-lg rounded-lg overflow-hidden">
+//             <div className="overflow-y-auto w-full p-2">
+//               <div className="flex items-center bg-gray-200 p-2 rounded-lg">
+//                 <h6 className="font-extrabold text-gray-900">Messages</h6>
+//               </div>
+//               {profiles?.length > 0 ? (
+//                 profiles
+//                   .filter((profile) => profile?.members?.[0])
+//                   .map((profile) => (
+//                     <div
+//                       key={profile.id}
+//                       className="p-3 border border-gray-300 mt-3 flex items-center cursor-pointer rounded-lg hover:bg-[#c8bdbd]"
+//                       onClick={() =>
+//                         joinChatroom(
+//                           profile.id,
+//                           profile?.members?.[0]?.id,
+//                           profile?.members?.[0]?.profile_picture
+//                         )
+//                       }
+//                     >
+//                       <img
+//                         className="w-8 h-8 rounded-full"
+//                         src={`${BASE_URL}${profile?.members?.[0]?.profile_picture}`}
+//                         alt="profile_image"
+//                       />
+//                       <div className="ml-4">
+//                         <div className="font-bold">
+//                           {profile?.members?.[0]?.username}
+//                         </div>
+
+//                         <svg
+//                             className="w-6 h-6 text-gray-800"
+//                             aria-hidden="true"
+//                             xmlns="http://www.w3.org/2000/svg"
+//                             width="24"
+//                             height="24"
+//                             fill="none"
+//                             onClick={() =>
+//                               handleVideoCall(
+//                                 profile.members[0].email,
+//                                 profile.id
+//                               )
+//                             }
+//                             viewBox="0 0 24 24"
+//                           >
+//                             <path
+//                               stroke="currentColor"
+//                               strokeLinecap="round"
+//                               strokeLinejoin="round"
+//                               strokeWidth="2"
+//                               d="M14 6H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 11-6-2V9l6-2v10Z"
+//                             />
+//                           </svg>
+//                         <div className="text-xs text-gray-500">
+//                           {profile?.latest_message?.message
+//                             ? `${profile.latest_message.message.slice(0, 40)}...`
+//                             : "No message"}
+//                         </div>
+//                       </div>
+//                       {profile?.unseen_message_count > 0 && (
+//                         <span className="bg-[#dd2626] text-white text-xs ml-auto px-3 py-1 rounded-full">
+//                           {profile.unseen_message_count}
+//                         </span>
+//                       )}
+//                     </div>
+//                   ))
+//               ) : (
+//                 <p>No contacts</p>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//       {videoCallDetails && (
+//         <IncomingVideoCallAlert
+//           videoCallDetails={videoCallDetails}
+//           onAccept={handleAcceptCall}
+//           onDecline={handleDeclineCall}
+//         />
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Messages;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../../../utils/constants";
 import NavBar from "../usercommon/Navbar";
@@ -2243,16 +2645,17 @@ const Messages = () => {
                   .filter((profile) => profile?.members?.[0])
                   .map((profile) => (
                     <div
-                      key={profile.id}
-                      className="p-3 border border-gray-300 mt-3 flex items-center cursor-pointer rounded-lg hover:bg-[#c8bdbd]"
-                      onClick={() =>
-                        joinChatroom(
-                          profile.id,
-                          profile?.members?.[0]?.id,
-                          profile?.members?.[0]?.profile_picture
-                        )
-                      }
-                    >
+                    key={profile.id}
+                    className="p-3 border border-gray-300 mt-3 flex items-center justify-between cursor-pointer rounded-lg hover:bg-[#c8bdbd]"
+                    onClick={() =>
+                      joinChatroom(
+                        profile.id,
+                        profile?.members?.[0]?.id,
+                        profile?.members?.[0]?.profile_picture
+                      )
+                    }
+                  >
+                    <div className="flex items-center">
                       <img
                         className="w-8 h-8 rounded-full"
                         src={`${BASE_URL}${profile?.members?.[0]?.profile_picture}`}
@@ -2268,12 +2671,38 @@ const Messages = () => {
                             : "No message"}
                         </div>
                       </div>
+                    </div>
+
+                    <div className="flex items-center">
                       {profile?.unseen_message_count > 0 && (
-                        <span className="bg-[#dd2626] text-white text-xs ml-auto px-3 py-1 rounded-full">
+                        <span className="bg-[#dd2626] text-white text-xs mr-4 px-3 py-1 rounded-full">
                           {profile.unseen_message_count}
                         </span>
                       )}
+                      <svg
+                        className="w-6 h-6 text-gray-800 cursor-pointer"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVideoCall(profile.members[0].email, profile.id);
+                        }}
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M14 6H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 11-6-2V9l6-2v10Z"
+                        />
+                      </svg>
                     </div>
+                  </div>
+
                   ))
               ) : (
                 <p>No contacts</p>
