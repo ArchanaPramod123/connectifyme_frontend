@@ -347,10 +347,14 @@ const UserProfilePage = () => {
   };
 
 
-    // Handle deleting a post
-  const handleDeletePost = (postID) => {
-    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postID));
-  };
+// Update the delete post function in UserProfilePage
+const handleDeletePost = (deletedPostId) => {
+  // Filter out the deleted post from the state
+  setPosts((prevPosts) => prevPosts.filter((post) => post.id !== deletedPostId));
+  closePostDetail(); // Close the modal after deletion
+};
+
+  
 
   const openPostDetail = (postId) => {
     setSelectedPostId(postId);
@@ -391,9 +395,9 @@ const UserProfilePage = () => {
 
   return (
     <div className="flex bg-[#faf7f4] min-h-screen">
-      <div className="w-1/6 bg-[#faf7f4] fixed border-r-2 min-h-screen">
+      {/* <div className="w-1/6 bg-[#faf7f4] fixed border-r-2 min-h-screen">
         <Navbar />
-      </div>
+      </div> */}
       <div className="w-full flex flex-col pl-[16.5%] pt-8 pb-8">
         <div className="flex flex-col items-center lg:flex-row lg:items-start lg:px-20 lg:py-8 lg:gap-8">
           <div className="flex justify-center items-center  mb-4 lg:mb-0 lg:w-1/3">
@@ -487,7 +491,6 @@ const UserProfilePage = () => {
         />
       )}
 
-       {/* Modal for Followers */}
        {showFollowersModal && (
           <UserFollowFollowing
             isOpen={showFollowersModal}
@@ -497,7 +500,6 @@ const UserProfilePage = () => {
           />
         )}
 
-        {/* Modal for Following */}
         {showFollowingModal && (
           <UserFollowFollowing
             isOpen={showFollowingModal}
@@ -506,15 +508,11 @@ const UserProfilePage = () => {
             users={following}
           />
         )}
-
-        
-
-
       <PostDetailPage
         postID={selectedPostId}
         onClose={closePostDetail}
         isPostDetailOpen={isPostDetailOpen}
-        onDeletePost={handleDeletePost}
+        onDeletePost={handleDeletePost} 
       />
     </div>
   );

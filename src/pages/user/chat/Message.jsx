@@ -2551,11 +2551,17 @@ const Messages = () => {
 
   return (
     <div className="flex h-screen">
-      <div className="w-[16.5%] bg-[#faf7f4] border-r-2 border-double fixed h-full">
+      {/* <div className="w-[16.5%] bg-[#faf7f4] border-r-2 border-double fixed h-full">
         <NavBar />
-      </div>
-      <div className="flex flex-col w-full pl-[16.5%] bg-[#faf7f4]">
-        <div className="flex flex-grow p-2 h-screen">
+      </div> */}
+      {/* <div className="flex flex-col w-full pl-[16.5%] bg-[#faf7f4]">
+        <div className="flex flex-grow p-2 h-screen"> */}
+        <div className="flex flex-col w-full pl-[18%] bg-[#faf7f4]">
+    <div className="flex flex-grow p-2 h-[calc(100vh-60px)]">
+    {/* <div className="flex flex-col w-full pl-[22%] bg-[#faf7f4]">  {/* Increase padding to 20% */}
+    {/* <div className="flex flex-grow p-2 h-[calc(100vh-90px)]">  Adjust height by subtracting 80px  */}
+
+
           <div className="flex flex-col w-3/5 mt-5 p-1 m-2 bg-white shadow-lg rounded-lg overflow-hidden">
             {bg ? (
               <div ref={ref} className="flex flex-col p-4 overflow-auto mb-5">

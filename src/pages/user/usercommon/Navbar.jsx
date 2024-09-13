@@ -322,10 +322,347 @@
 
 
 
-import { jwtDecode } from "jwt-decode";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { jwtDecode } from "jwt-decode";
+// import React, { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import {FaHome,FaSearch,FaBell,FaEnvelope,FaUserCircle,FaSignOutAlt,FaPlus,FaCompass,} from "react-icons/fa";
+// import UserLogout from "../UserLogout";
+// import CreatePostPage from "../post/CreatePost";
+// import SearchModal from "../SearchModel";
+// import { useSelector } from "react-redux";
+// import getNotificationApi from "../post/getNotificationsApi";
+// import Notifications from "../post/Notifications";
+// import { FaBars, FaTimes } from "react-icons/fa";
+
+// const NavBar = ({ fetchPosts }) => {
+//   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+//   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+//   const [showNotifications, setShowNotifications] = useState(false);
+//   const [notification, setNotification] = useState([]);
+
+//   const { user_id, name } = useSelector((state) => state.auth);
+//   const WEBSOCKET_BASE_URL = import.meta.env.VITE_WEBSOCKET;
+
+//   const openSearchModal = () => setIsSearchModalOpen(true);
+//   const closeSearchModal = () => setIsSearchModalOpen(false);
+
+//   const openCreatePostModal = () => {
+//     setIsCreatePostModalOpen(true);
+//   };
+
+//   const closeCreatePostModal = () => {
+//     setIsCreatePostModalOpen(false);
+//   };
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const data = await getNotificationApi();
+//         setNotification(data);
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     };
+//     if (user_id) {
+//       fetchData();
+//     }
+//   }, [user_id]);
+  
+
+//   useEffect(() => {
+//     if (user_id) {
+//       const accessToken = localStorage.getItem('access');
+
+//       const websocketProtocol =
+//         window.location.protocol === "https:" ? "wss://" : "ws://";
+//       const socket = new WebSocket(
+//         `${websocketProtocol}${WEBSOCKET_BASE_URL}/ws/notification/?token=${accessToken}`
+//       );
+
+//       socket.onopen = () => {
+//         console.log("WebSocket connection established");
+//       };
+
+//       socket.onmessage = (event) => {
+//         const newNotification = JSON.parse(event.data);
+//         if (newNotification.type === "notification") {
+//           setNotification((prevNotifications) => [
+//             ...prevNotifications,
+//             newNotification.payload,
+//           ]);
+//         }
+//       };
+
+//       socket.onclose = (event) => {
+//         console.log("WebSocket closed with code:", event.code, "reason:", event.reason);
+//       };
+
+//       return () => {
+//         socket.close();
+//       };
+//     }
+//   }, [user_id]);
+
+//   const removeNotification = (notificationIdToRemove) => {
+//     setNotification((prevNotifications) =>
+//       prevNotifications.filter(
+//         (notification) => notification.id !== notificationIdToRemove
+//       )
+//     );
+//   };
+
+//   return (
+//     <div className="w-[250px] h-screen fixed top-0 left-0 bg-white flex flex-col items-center pt-5 shadow-lg">
+//       <Link
+//         to="/user/home"
+//         className="text-black text-[33px] mb-10 font-[Style Script] no-underline"
+//       >
+//         Connectify
+//       </Link>
+//       <div className="flex flex-col items-center w-full">
+//         <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
+//           <Link to="/user/home" className="flex items-center w-full no-underline text-inherit">
+//             <FaHome />
+//             <span className="ml-2">Home</span>
+//           </Link>
+//         </div>
+
+//         <div
+//           onClick={openSearchModal}
+//           className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black"
+//         >
+//           <FaSearch />
+//           <span className="ml-2">Search</span>
+//         </div>
+
+//         <div
+//           onClick={() => setShowNotifications(true)}
+//           className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black"
+//         >
+//           <FaBell />
+//           <span className="ml-2">Notification</span>
+//           <span
+//             className={`text-xs ml-2 text-blue-700 ${
+//               notification?.length === 0
+//                 ? ""
+//                 : "border border-black rounded-full"
+//             }`}
+//           >
+//             {notification?.length === 0 ? "" : notification?.length}
+//           </span>
+//         </div>
+
+//         <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
+//           <Link to="/user/messages" className="flex items-center w-full no-underline text-inherit">
+//             <FaEnvelope />
+//             <span className="ml-2">Messages</span>
+//           </Link>
+//         </div>
+
+//         <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
+//           <Link to="/user/explore" className="flex items-center w-full no-underline text-inherit">
+//             <FaCompass />
+//             <span className="ml-2">Explore</span>
+//           </Link>
+//         </div>
+
+//         <div
+//           onClick={openCreatePostModal}
+//           className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black"
+//         >
+//           <FaPlus />
+//           <span className="ml-2">Create Post</span>
+//         </div>
+
+//         <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
+//           <Link to="/user/profile" className="flex items-center w-full no-underline text-inherit">
+//             <FaUserCircle />
+//             <span className="ml-2">Profile</span>
+//           </Link>
+//         </div>
+
+//         <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
+//           <FaSignOutAlt />
+//           <UserLogout />
+//         </div>
+//       </div>
+
+//       <CreatePostPage
+//         isOpen={isCreatePostModalOpen}
+//         onRequestClose={closeCreatePostModal}
+//         fetchPosts={fetchPosts}
+//       />
+//       <SearchModal isOpen={isSearchModalOpen} onClose={closeSearchModal} />
+//       <Notifications
+//         isVisible={showNotifications}
+//         onClose={() => setShowNotifications(false)}
+//         notification={notification}
+//         removeNotification={removeNotification}
+//       />
+//     </div>
+//   );
+// };
+
+// export default NavBar;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import {
+//   FaHome,
+//   FaSearch,
+//   FaBell,
+//   FaEnvelope,
+//   FaUserCircle,
+//   FaSignOutAlt,
+//   FaPlus,
+//   FaCompass,
+//   FaBars,
+//   FaTimes,
+// } from "react-icons/fa";
+// import UserLogout from "../UserLogout";
+// import CreatePostPage from "../post/CreatePost";
+// import SearchModal from "../SearchModel";
+// import { useSelector } from "react-redux";
+// import getNotificationApi from "../post/getNotificationsApi";
+// import Notifications from "../post/Notifications";
+
+// const NavBar = ({ fetchPosts }) => {
+//   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+//   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+//   const [showNotifications, setShowNotifications] = useState(false);
+//   const [notification, setNotification] = useState([]);
+//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+//   const { user_id } = useSelector((state) => state.auth);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const data = await getNotificationApi();
+//         setNotification(data);
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     };
+//     if (user_id) {
+//       fetchData();
+//     }
+//   }, [user_id]);
+
+//   const toggleMobileMenu = () => {
+//     setIsMobileMenuOpen(!isMobileMenuOpen);
+//   };
+
+//   return (
+//     <>
+//       {/* Mobile Navbar */}
+//       <div className="flex justify-between items-center bg-white p-4 shadow-md md:hidden">
+//         <Link to="/user/home" className="text-2xl font-bold">Connectify</Link>
+//         <button onClick={toggleMobileMenu}>
+//           {isMobileMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
+//         </button>
+//       </div>
+
+//       {/* Sidebar for large screens */}
+//       <div className={`absolute inset-0 bg-black bg-opacity-50 z-20 ${isMobileMenuOpen ? 'block' : 'hidden'} md:hidden`} onClick={toggleMobileMenu}></div>
+//       <div className={`absolute left-0 top-0 w-[250px] h-screen bg-white shadow-lg z-30 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+//         <Link to="/user/home" className="text-black text-[33px] mb-10 font-[Style Script] no-underline block text-center py-5">
+//           Connectify
+//         </Link>
+//         <div className="flex flex-col items-center w-full space-y-4">
+//           <Link to="/user/home" className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition">
+//             <FaHome className="mr-2" /> Home
+//           </Link>
+//           <div onClick={() => setIsSearchModalOpen(true)} className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+//             <FaSearch className="mr-2" /> Search
+//           </div>
+//           <div onClick={() => setShowNotifications(true)} className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+//             <FaBell className="mr-2" /> Notification {notification.length > 0 && <span className="text-sm ml-2 bg-blue-500 text-white px-2 rounded-full">{notification.length}</span>}
+//           </div>
+//           <Link to="/user/messages" className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition">
+//             <FaEnvelope className="mr-2" /> Messages
+//           </Link>
+//           <Link to="/user/explore" className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition">
+//             <FaCompass className="mr-2" /> Explore
+//           </Link>
+//           <div onClick={() => setIsCreatePostModalOpen(true)} className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+//             <FaPlus className="mr-2" /> Create Post
+//           </div>
+//           <Link to="/user/profile" className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition">
+//             <FaUserCircle className="mr-2" /> Profile
+//           </Link>
+//           <div className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+//             <FaSignOutAlt className="mr-2" />
+//             <UserLogout />
+//           </div>
+//         </div>
+//       </div>
+
+//       <CreatePostPage
+//         isOpen={isCreatePostModalOpen}
+//         onRequestClose={() => setIsCreatePostModalOpen(false)}
+//         fetchPosts={fetchPosts}
+//       />
+//       <SearchModal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} />
+//       <Notifications
+//         isVisible={showNotifications}
+//         onClose={() => setShowNotifications(false)}
+//         notification={notification}
+//       />
+//     </>
+//   );
+// };
+
+// export default NavBar;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {FaHome,FaSearch,FaBell,FaEnvelope,FaUserCircle,FaSignOutAlt,FaPlus,FaCompass,} from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
+import { FaHome, FaSearch, FaBell, FaEnvelope, FaUserCircle, FaSignOutAlt, FaPlus, FaCompass, FaBars, FaTimes } from "react-icons/fa";
 import UserLogout from "../UserLogout";
 import CreatePostPage from "../post/CreatePost";
 import SearchModal from "../SearchModel";
@@ -338,20 +675,10 @@ const NavBar = ({ fetchPosts }) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notification, setNotification] = useState([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const { user_id, name } = useSelector((state) => state.auth);
-  const WEBSOCKET_BASE_URL = import.meta.env.VITE_WEBSOCKET;
-
-  const openSearchModal = () => setIsSearchModalOpen(true);
-  const closeSearchModal = () => setIsSearchModalOpen(false);
-
-  const openCreatePostModal = () => {
-    setIsCreatePostModalOpen(true);
-  };
-
-  const closeCreatePostModal = () => {
-    setIsCreatePostModalOpen(false);
-  };
+  const { user_id } = useSelector((state) => state.auth);
+  const location = useLocation(); // <-- to check the current route
 
   useEffect(() => {
     const fetchData = async () => {
@@ -366,139 +693,74 @@ const NavBar = ({ fetchPosts }) => {
       fetchData();
     }
   }, [user_id]);
-  
 
-  useEffect(() => {
-    if (user_id) {
-      const accessToken = localStorage.getItem('access');
-
-      const websocketProtocol =
-        window.location.protocol === "https:" ? "wss://" : "ws://";
-      const socket = new WebSocket(
-        `${websocketProtocol}${WEBSOCKET_BASE_URL}/ws/notification/?token=${accessToken}`
-      );
-
-      socket.onopen = () => {
-        console.log("WebSocket connection established");
-      };
-
-      socket.onmessage = (event) => {
-        const newNotification = JSON.parse(event.data);
-        if (newNotification.type === "notification") {
-          setNotification((prevNotifications) => [
-            ...prevNotifications,
-            newNotification.payload,
-          ]);
-        }
-      };
-
-      socket.onclose = (event) => {
-        console.log("WebSocket closed with code:", event.code, "reason:", event.reason);
-      };
-
-      return () => {
-        socket.close();
-      };
-    }
-  }, [user_id]);
-
-  const removeNotification = (notificationIdToRemove) => {
-    setNotification((prevNotifications) =>
-      prevNotifications.filter(
-        (notification) => notification.id !== notificationIdToRemove
-      )
-    );
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  // Conditionally render the Navbar based on the current route
+  if (location.pathname.startsWith("/user/video-call")) {
+    // Hide the Navbar when on the video call page
+    return null;
+  }
+
   return (
-    <div className="w-[250px] h-screen fixed top-0 left-0 bg-white flex flex-col items-center pt-5 shadow-lg">
-      <Link
-        to="/user/home"
-        className="text-black text-[33px] mb-10 font-[Style Script] no-underline"
-      >
-        Connectify
-      </Link>
-      <div className="flex flex-col items-center w-full">
-        <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
-          <Link to="/user/home" className="flex items-center w-full no-underline text-inherit">
-            <FaHome />
-            <span className="ml-2">Home</span>
+    <>
+      {/* Mobile Navbar */}
+      <div className="flex justify-between items-center bg-white p-4 shadow-md md:hidden">
+        <Link to="/user/home" className="text-2xl font-bold">Connectify</Link>
+        <button onClick={toggleMobileMenu}>
+          {isMobileMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
+        </button>
+      </div>
+
+      {/* Sidebar for large screens */}
+      <div className={`fixed inset-0 bg-black bg-opacity-50 z-20 ${isMobileMenuOpen ? 'block' : 'hidden'} md:hidden`} onClick={toggleMobileMenu}></div>
+      <div className={`fixed left-0 top-0 w-[250px] h-screen bg-white shadow-lg z-30 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        <Link to="/user/home" className="text-black text-[33px] mb-10 font-[Style Script] no-underline block text-center py-5">
+          Connectify
+        </Link>
+        <div className="flex flex-col items-center w-full space-y-4">
+          <Link to="/user/home" className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition">
+            <FaHome className="mr-2" /> Home
           </Link>
-        </div>
-
-        <div
-          onClick={openSearchModal}
-          className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black"
-        >
-          <FaSearch />
-          <span className="ml-2">Search</span>
-        </div>
-
-        <div
-          onClick={() => setShowNotifications(true)}
-          className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black"
-        >
-          <FaBell />
-          <span className="ml-2">Notification</span>
-          <span
-            className={`text-xs ml-2 text-blue-700 ${
-              notification?.length === 0
-                ? ""
-                : "border border-black rounded-full"
-            }`}
-          >
-            {notification?.length === 0 ? "" : notification?.length}
-          </span>
-        </div>
-
-        <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
-          <Link to="/user/messages" className="flex items-center w-full no-underline text-inherit">
-            <FaEnvelope />
-            <span className="ml-2">Messages</span>
+          <div onClick={() => setIsSearchModalOpen(true)} className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+            <FaSearch className="mr-2" /> Search
+          </div>
+          <div onClick={() => setShowNotifications(true)} className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+            <FaBell className="mr-2" /> Notification {notification.length > 0 && <span className="text-sm ml-2 bg-blue-500 text-white px-2 rounded-full">{notification.length}</span>}
+          </div>
+          <Link to="/user/messages" className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition">
+            <FaEnvelope className="mr-2" /> Messages
           </Link>
-        </div>
-
-        <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
-          <Link to="/user/explore" className="flex items-center w-full no-underline text-inherit">
-            <FaCompass />
-            <span className="ml-2">Explore</span>
+          <Link to="/user/explore" className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition">
+            <FaCompass className="mr-2" /> Explore
           </Link>
-        </div>
-
-        <div
-          onClick={openCreatePostModal}
-          className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black"
-        >
-          <FaPlus />
-          <span className="ml-2">Create Post</span>
-        </div>
-
-        <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
-          <Link to="/user/profile" className="flex items-center w-full no-underline text-inherit">
-            <FaUserCircle />
-            <span className="ml-2">Profile</span>
+          <div onClick={() => setIsCreatePostModalOpen(true)} className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+            <FaPlus className="mr-2" /> Create Post
+          </div>
+          <Link to="/user/profile" className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition">
+            <FaUserCircle className="mr-2" /> Profile
           </Link>
-        </div>
-
-        <div className="text-gray-800 my-4 text-[20px] cursor-pointer flex items-center justify-start w-4/5 p-2.5 rounded-lg transition duration-300 hover:bg-gray-200 hover:text-black">
-          <FaSignOutAlt />
-          <UserLogout />
+          <div className="flex items-center w-4/5 text-gray-800 p-2 rounded-lg hover:bg-gray-200 transition cursor-pointer">
+            <FaSignOutAlt className="mr-2" />
+            <UserLogout />
+          </div>
         </div>
       </div>
 
       <CreatePostPage
         isOpen={isCreatePostModalOpen}
-        onRequestClose={closeCreatePostModal}
+        onRequestClose={() => setIsCreatePostModalOpen(false)}
         fetchPosts={fetchPosts}
       />
-      <SearchModal isOpen={isSearchModalOpen} onClose={closeSearchModal} />
+      <SearchModal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} />
       <Notifications
         isVisible={showNotifications}
         onClose={() => setShowNotifications(false)}
         notification={notification}
-        removeNotification={removeNotification}
       />
-    </div>
+    </>
   );
 };
 

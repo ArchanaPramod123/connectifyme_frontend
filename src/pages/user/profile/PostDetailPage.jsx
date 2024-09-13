@@ -4,7 +4,7 @@ import { Toaster, toast } from "sonner";
 import { FaHeart, FaRegHeart, FaEllipsisH } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
-const PostDetailPage = ({ postID, onClose, isPostDetailOpen }) => {
+const PostDetailPage = ({ postID, onClose, isPostDetailOpen, onDeletePost }) => {
   const [post, setPost] = useState(null);
   const [error, setError] = useState("");
   const [liked, setLiked] = useState(false);
@@ -72,20 +72,18 @@ const PostDetailPage = ({ postID, onClose, isPostDetailOpen }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-    //   onDeletePost(postID);
-    //   onClose();
-    //   toast.success("delete Successfuly");
-    // } 
-    if (response.status === 204) { // Check for successful deletion status code
-      onDeletePost(postID); // Remove post from UI
-      onClose(); // Close the modal
-      toast.success("Post deleted successfully!");
-    } else {
-      toast.error("Failed to delete post. Try again.");
-    }
-  } 
+      console.log("________________",postID);
+      onDeletePost(postID);
+      
+      // toast.success("delete Successfuly");
+      
+      onClose();
+      toast.success("delete Successfuly");
+    } 
+   
     catch (error) {
       setError("Failed to delete post");
+      console.error("Failed to delete post:", error);
     }
   };
 
